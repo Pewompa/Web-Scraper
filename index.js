@@ -6,6 +6,8 @@ const router = require('./router/scraperRouter');
 app.use(router);
 app.use(express.json());
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`server running on port ${port}`);
 });
+
+module.exports = { app, server };
