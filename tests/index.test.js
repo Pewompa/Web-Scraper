@@ -15,8 +15,11 @@ describe('page endpoints', () => {
       .get('/3')
       .set('Accept', 'application/JSON')
       .expect('Content-Type', /json/)
-      .expect(200);
-    done();
+      .then((res) => {
+        expect(res.body.length).toBe(90);
+        expect(res.body).to.have.property('ecdsa_fingerprint');
+      })
+      .expect(200, done());
   });
   it('GET /invalid should respond with error', (done) => {
     request(server).get('//').expect(404);
