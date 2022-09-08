@@ -12,12 +12,21 @@ async function getAll(req, res) {
       .then((response) => {
         const html = response.data;
         const $ = cheerio.load(html);
-        $('.titlelink', html).each(function () {
-          const title = $(this).text();
-          const url = $(this).attr('href');
-          articles.push({ title, url });
+        $('.athing', html).each(function () {
+          const rank = $(this).children('.title').children('.rank').text();
+          const title = $(this)
+            .children('.title')
+            .children('.titlelink')
+            .text();
+          const url = $(this)
+            .children('.title')
+            .children('.titlelink')
+            .attr('href');
+          // const rank = $(this).text();
+          articles.push({ rank, title, url });
         });
       })
+
       .catch((err) => console.error(err));
   }
   myCache.set(page, articles, 300);
