@@ -7,5 +7,5 @@ app.use(router);
 app.use(express.json());
 
 app.listen(port, () => {
-  console.log(`server started on port ${port}`);
+  console.log(`server running on port ${port}`);
 });

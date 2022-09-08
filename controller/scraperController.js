@@ -1,41 +1,17 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const NodeCache = require('node-cache');
+const myCache = new NodeCache();
 
-// const getTest = (req, res) => {
-//   let { page } = req.params;
-//   let numo = page;
-// };
-// const articles = [];
-// for (let i = 1; i <= num; i++) {
-//   const url = `https://news.ycombinator.com/news?p=${i}`;
-//   axios(url)
-//     .then((response) => {
-//       const html = response.data;
-//       const $ = cheerio.load(html);
-
-//       $('.titlelink', html).each(function () {
-//         const title = $(this).text();
-//         const url = $(this).attr('href');
-//         articles.push({ title, url });
-//       });
-//       //   res.send(articles);
-//       console.log(`page: ${i}`);
-//       console.log(articles);
-//     })
-//     .catch((err) => console.log(err));
-// }
-async function getTest(req, res) {
-  let { page } = req.params;
-  let num = page;
+async function getAll(req, res) {
+  req.params.page ? (page = req.params.page) : (page = 1);
   let articles = [];
-
-  for (let i = 1; i < num + 1; i++) {
+  for (let i = 1; i <= page; i++) {
     const url = `https://news.ycombinator.com/news?p=${i}`;
     await axios(url)
       .then((response) => {
         const html = response.data;
         const $ = cheerio.load(html);
-
         $('.titlelink', html).each(function () {
           const title = $(this).text();
           const url = $(this).attr('href');
@@ -44,19 +20,21 @@ async function getTest(req, res) {
       })
       .catch((err) => console.error(err));
   }
-
-  function limit(arr, num) {
-    let output = [];
-    let i = 0;
-    while (output.length < num * 30) {
-      output.push(arr[i]);
-      i++;
-    }
-    return output;
-  }
-  let result = limit(articles, num);
-  console.log(result.length);
-  res.send(result);
+  console.log('two');
+  myCache.set(page, articles, 300);
+  res.send(articles);
 }
 
-module.exports = { getTest };
+// Cache middleware
+function cache(req, res, next) {
+  const { page } = req.params;
+  let cachedValue = myCache.get(page);
+  if (cachedValue !== undefined) {
+    console.log('inside');
+    res.send(cachedValue);
+  } else {
+    next();
+  }
+}
+
+module.exports = { getAll, cache };
