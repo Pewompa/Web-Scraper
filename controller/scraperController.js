@@ -20,17 +20,16 @@ async function getAll(req, res) {
       })
       .catch((err) => console.error(err));
   }
-  console.log('two');
   myCache.set(page, articles, 300);
   res.send(articles);
 }
 
 // Cache middleware
 function cache(req, res, next) {
-  const { page } = req.params;
+  req.params.page ? (page = req.params.page) : (page = 1);
+
   let cachedValue = myCache.get(page);
   if (cachedValue !== undefined) {
-    console.log('inside');
     res.send(cachedValue);
   } else {
     next();
