@@ -5,7 +5,6 @@ const myCache = new NodeCache();
 
 async function getAll(req, res) {
   req.params.page ? (page = req.params.page) : (page = 1);
-  console.log(page);
   let articles = [];
   for (let i = 1; i <= page; i++) {
     const url = `https://news.ycombinator.com/news?p=${i}`;

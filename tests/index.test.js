@@ -1,6 +1,4 @@
 const server = require('../router/scraperRouter');
-// const server = require('./controller/scraperController');
-// const supertest = require('supertest');
 const request = require('supertest');
 
 describe('page endpoints', () => {
