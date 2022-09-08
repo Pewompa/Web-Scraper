@@ -21,7 +21,6 @@ async function getAll(req, res) {
       })
       .catch((err) => console.error(err));
   }
-  console.log('two');
   myCache.set(page, articles, 300);
   res.send(articles);
 }
