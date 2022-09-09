@@ -22,8 +22,30 @@ async function getAll(req, res) {
             .children('.title')
             .children('.titlelink')
             .attr('href');
-          // const rank = $(this).text();
-          articles.push({ rank, title, url });
+          const points = $(this)
+            .next('tr')
+            .children('.subtext')
+            .children('.score')
+            .text();
+          const username = $(this)
+            .next('tr')
+            .children('.subtext')
+            .children('.hnuser')
+            .text();
+          const age = $(this)
+            .next('tr')
+            .children('.subtext')
+            .children('.age')
+            .text();
+          const comments = $(this)
+            .next('tr')
+            .children('.subtext')
+            .children('.age')
+            .next('span')
+            .next('a')
+            .next('a')
+            .text();
+          articles.push({ rank, title, url, points, username, age, comments });
         });
       })
 
