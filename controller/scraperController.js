@@ -22,6 +22,12 @@ async function getAll(req, res) {
             .children('.title')
             .children('.titlelink')
             .attr('href');
+          const site = $(this)
+            .children('.title')
+            .children('.sitebit')
+            .children('a')
+            .children('span')
+            .text();
           const points = $(this)
             .next('tr')
             .children('.subtext')
@@ -45,7 +51,16 @@ async function getAll(req, res) {
             .next('a')
             .next('a')
             .text();
-          articles.push({ rank, title, url, points, username, age, comments });
+          articles.push({
+            rank,
+            title,
+            url,
+            site,
+            points,
+            username,
+            age,
+            comments,
+          });
         });
       })
 
