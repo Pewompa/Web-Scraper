@@ -3,30 +3,43 @@ const cheerio = require('cheerio');
 const NodeCache = require('node-cache');
 const myCache = new NodeCache({ stdTTL: 1000, checkperiod: 1209 });
 
+let previousPage = 0;
+
 async function getAll(req, res) {
   req.params.page ? (page = req.params.page) : (page = 1);
   let articles = [];
 
-  let articlesNeeded = articles.length - page * 30;
+  let cachedValue = myCache.get(previousPage);
 
-  let cachedValue = myCache.get(page);
+  //if there is a cache we push its values to the output array
   if (cachedValue !== undefined) {
     cachedValue.map((el) => articles.push(el));
   }
+  //check whether we have enough files stored in the cache (previous render was bigger than current)
+  let articlesNeeded = articles.length - page * 30;
 
+  //setting the page at which axios needs to start fetchng from
   let startingPage = articles.length / 30 + 1;
 
+  //if we are loading the same page twice we immediately send what is in the cache
   if (page === startingPage - 1) {
-    console.log('same');
     res.send(articles);
     return;
-  } else if (articles.length > articlesNeeded) {
-    startingPage = page;
+  } else if (
+    //if articles is positive that means we have enough files in the cache to send so no need to get with axios
+    articles.length &&
+    articles.length > articlesNeeded &&
+    articlesNeeded > 0
+  ) {
+    //returning an array that was created by looping through our bigger than needed cache
+    let newArr = [];
+    for (let i = 0; i < articlesNeeded; i++) {
+      newArr.push(articles[i]);
+    }
+    res.send(newArr);
+    return;
   }
 
-  console.log('articles length: ', articles.length);
-  console.log('starting page: ', startingPage);
-  console.log('####################################');
   for (let i = startingPage; i <= page; i++) {
     const url = `https://news.ycombinator.com/news?p=${i}`;
     await axios(url)
@@ -88,18 +101,9 @@ async function getAll(req, res) {
       .catch((err) => console.error(err));
   }
   myCache.set(page, articles, 3000);
+
+  previousPage = page;
   res.send(articles);
 }
-
-// Cache middleware
-// function cache(req, res, next) {
-//   req.params.page ? (page = req.params.page) : (page = 1);
-//   let cachedValue = myCache.get(page);
-//   if (cachedValue !== undefined) {
-//     res.send(cachedValue);
-//   } else {
-//     next();
-//   }
-// }
 
 module.exports = { getAll };
