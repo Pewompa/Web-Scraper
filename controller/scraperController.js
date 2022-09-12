@@ -14,7 +14,7 @@ async function getAll(req, res) {
   if (cachedValue !== undefined) {
     cachedValue.map((el) => articles.push(el));
   }
-  //check whether we have enough files stored in the cache (previous render was bigger than current)
+  //check whether we have enough files stored in the cache (previous fetch was bigger than current)
   let articlesNeeded = articles.length - page * 30;
 
   //setting the page at which axios needs to start fetchng from
