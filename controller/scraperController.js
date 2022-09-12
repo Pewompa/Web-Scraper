@@ -1,10 +1,9 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const NodeCache = require('node-cache');
-const myCache = new NodeCache({ stdTTL: 1000, checkperiod: 1209 });
+const myCache = new NodeCache();
 
 let previousPage = 0;
-
 async function getAll(req, res) {
   req.params.page ? (page = req.params.page) : (page = 1);
   let articles = [];
@@ -100,7 +99,8 @@ async function getAll(req, res) {
 
       .catch((err) => console.error(err));
   }
-  myCache.set(page, articles, 3000);
+  myCache.set(page, articles, 300);
+  console.log(previousPage);
 
   previousPage = page;
   res.send(articles);
