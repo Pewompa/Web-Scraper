@@ -17,15 +17,15 @@ async function getAll(req, res) {
   //check whether we have enough files stored in the cache (previous fetch was bigger than current)
   let articlesNeeded = articles.length - page * 30;
 
-  //setting the page at which axios needs to start fetchng from
+  //setting the page at which axios needs to start fetching from
   let startingPage = articles.length / 30 + 1;
 
-  //if we are loading the same page twice we immediately send what is in the cache
+  //if we are loading the same page twice in a row we immediately send what is in the cache
   if (page === startingPage - 1) {
     res.send(articles);
     return;
   } else if (
-    //if articles is positive that means we have enough files in the cache to send so no need to get with axios
+    //if articles cache has more files than we need that means we have enough files in the cache to send so no need to get with axios
     articles.length &&
     articles.length > articlesNeeded &&
     articlesNeeded > 0
